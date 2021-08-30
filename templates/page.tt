@@ -74,5 +74,7 @@ the <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GNU GPL v3</a>.</p>
 
 <p>This documentation browser by <a href="https://incoherency.co.uk/">James Stanley</a>. Please report bugs <a href="https://github.com/jes/collapseos-doc">on github</a>.</p>
 
+[% PROCESS foot.tt -%]
+
 </body>
 </html>

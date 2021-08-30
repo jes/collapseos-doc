@@ -24,7 +24,9 @@ $output_dir or usage(1, "--output-dir is mandatory");
 -d $output_dir or usage(1, "$output_dir is not a directory");
 -d $template_dir or usage(1, "$template_dir is not a directory");
 
-my $tt = Template->new();
+my $tt = Template->new(
+    INCLUDE_PATH => $template_dir,
+);
 
 write_pages($output_dir, $doc_dir, "doc/");
 
@@ -69,7 +71,7 @@ sub write_page {
         $html = htmlify($txtcontent, $files_r);
     }
 
-    $tt->process("$template_dir/page.tt", {
+    $tt->process("page.tt", {
         files => $files_r,
         allowup => $allowup,
         html_content => $html,
@@ -86,14 +88,6 @@ sub write_pages {
     my @files = sort { ($b->{dir} <=> $a->{dir}) || ($a->{name} cmp $b->{name}) }
                 map { tmpl_file($_) }
                 glob("$doc_dir/*");
-
-    $tt->process("$template_dir/page.tt", {
-        files => \@files,
-        allowup => $allowup,
-        html_content => "Use navigation.", 
-        path => $path,
-    },
-    "$output_dir/index.html") or die $tt->error;
 
     for my $f (@files) {
         if ($f->{dir}) {
@@ -153,7 +147,7 @@ options:
 
 This program turns CollapseOS text documentation into a set of browsable HTML pages.
 
-mk-html-doc by James Stanley <james\@incoherency.co.uk>
+mk-html-doc by James Stanley <james\@incoherency.co.uk>.
 };
 
     exit($rc);

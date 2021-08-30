@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# grab latest snapshot
+rm -rf collapseos/
+mkdir collapseos/
+releasedate=$(./grab-collapseos --dir collapseos)
+curdate=$(date +"%Y-%m-%d %H:%M:%S")
+
+# update footer template
+cat > templates/foot.tt <<END
+<p>This page generated at $curdate from documentation in CollapseOS snapshot <a href="https://collapseos.org/collapseos-$releasedate.tar.gz">$releasedate</a>.</p>
+END
+
+# create html
+rm -rf html/
+mkdir html/
+./mk-html-doc -d collapseos/doc -o html/ -t templates/
+
+# clean up
+rm -rf collapseos/

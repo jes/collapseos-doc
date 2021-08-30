@@ -1,0 +1,59 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use LWP::Simple;
+use Getopt::Long;
+
+my $dir;
+
+GetOptions(
+    'd|dir=s' => \$dir,
+) or usage(1);
+
+$dir or usage(1, "--dir is mandatory");
+-d $dir or usage(1, "$dir is not a directory");
+
+# grab the CollapseOS download page
+my $html = get("http://collapseos.org/download.html");
+die "couldn't get download page" if !defined $html;
+
+# find the latest snapshot
+my @snapshots = reverse sort ($html =~ /collapseos-(\d{8}).tar.gz/);
+die "no snapshots found on download page" if !@snapshots;
+
+my $latestdate = $snapshots[0];
+my $latest = "collapseos-$latestdate.tar.gz";
+my $latesturl = "http://collapseos.org/$latest";
+
+# download the latest snapshot
+my $code = getstore($latesturl, "/tmp/$latest");
+die "couldn't get $latesturl: HTTP $code" if $code != 200;
+
+# untar the latest snapshot
+system("rm -rf \Q$dir\E/*");
+die if system("tar -C \Q$dir\E -xf /tmp/\Q$latest\E") != 0;
+
+unlink("/tmp/$latest");
+
+print "$latestdate\n";
+
+sub usage {
+    my ($rc, $msg) = @_;
+
+    print STDERR "error: $msg\n" if $msg;
+
+    print STDERR qq{usage: grab-collapseos [options]
+
+options:
+    -d,--dir DIR    Target directory.
+
+This program grabs the latest CollapseOS snapshot tarball and outputs its
+date code in YYYYMMDD format.
+
+grab-collapseos by James Stanley <james\@incoherency.co.uk>.
+};
+
+    exit($rc);
+}
