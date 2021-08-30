@@ -1,0 +1,153 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+
+use File::Copy;
+use Getopt::Long;
+use Template;
+
+my $doc_dir;
+my $output_dir;
+my $template_dir = "templates/";
+
+GetOptions(
+    "d|doc-dir=s" => \$doc_dir,
+    "o|output-dir=s" => \$output_dir,
+    "t|template-dir=s" => \$template_dir,
+    "h|help" => sub { usage(0) },
+) or usage(1);
+
+$doc_dir or usage(1, "--doc-dir is mandatory");
+$output_dir or usage(1, "--output-dir is mandatory");
+-d $doc_dir or usage(1, "$doc_dir is not a directory");
+-d $output_dir or usage(1, "$output_dir is not a directory");
+-d $template_dir or usage(1, "$template_dir is not a directory");
+
+my $tt = Template->new();
+
+write_pages($output_dir, $doc_dir, "doc/");
+
+sub tmpl_file {
+    my ($file) = @_;
+
+    my $isdir = -d $file;
+    my $name = $file;
+    $name =~ s/^.*\///g;
+
+    return {
+        dir => $isdir,
+        name => $name,
+    };
+}
+
+sub write_page {
+    my ($output_file, $doc_file, $path, $allowup, $files_r) = @_;
+
+    $path =~ s!//!/!g;
+
+    my $html = '';
+
+    if ($doc_file =~ /\.(jpe?g|png)$/) {
+        # copy the image 
+        my $output_raw = $output_file;
+        $output_raw =~ s/\.html$//;
+        copy($doc_file, $output_raw);
+
+        # make html to show it
+        my $name = $doc_file;
+        $name =~ s/^.*\///g;
+        $html = "<img src=\"$name\">";
+    } else {
+        # htmlify text content
+
+        open(my $fh, '<', $doc_file)
+            or die "can't read $doc_file: $!\n";
+        my $txtcontent = join('', <$fh>);
+        close $fh;
+
+        $html = htmlify($txtcontent);
+    }
+
+    $tt->process("$template_dir/page.tt", {
+        files => $files_r,
+        allowup => $allowup,
+        html_content => $html,
+        path => $path,
+    },
+    $output_file) or die $tt->error;
+}
+
+sub write_pages {
+    my ($output_dir, $doc_dir, $path, $allowup) = @_;
+
+    $path =~ s!//!/!g;
+
+    my @files = sort { ($b->{dir} <=> $a->{dir}) || ($a->{name} cmp $b->{name}) }
+                map { tmpl_file($_) }
+                glob("$doc_dir/*");
+
+    $tt->process("$template_dir/page.tt", {
+        files => \@files,
+        allowup => $allowup,
+        html_content => "Use navigation.", 
+        path => $path,
+    },
+    "$output_dir/index.html") or die $tt->error;
+
+    for my $f (@files) {
+        if ($f->{dir}) {
+            write_pages("$output_dir/$f->{name}", "$doc_dir/$f->{name}", "$path/$f->{name}/", 1);
+        } else {
+            write_page("$output_dir/$f->{name}.html", "$doc_dir/$f->{name}", "$path/$f->{name}", $allowup, \@files);
+        }
+    }
+
+    my @index_files = sort {
+        ($a->{name} eq 'intro.txt') ? -1 :
+        ($b->{name} eq 'intro.txt') ?  1 :
+            (($a->{dir} <=> $b->{dir}) ||
+             ($a->{name} cmp $b->{name}))
+    } @files;
+    print "---\n";
+    print "  $_->{name}\n", for @index_files;
+    print "---\n";
+    my $index_name = $index_files[0]->{name};
+    copy("$output_dir/$index_name.html", "$output_dir/index.html");
+}
+
+sub htmlify {
+    my ($c) = @_;
+
+    $c =~ s/&/&amp;/g;
+    $c =~ s/</&lt;/g;
+    $c =~ s/>/&gt;/g;
+
+    $c =~ s/^#+\s+(.*)$/<span class="heading">$1<\/span>/mg;
+
+    my @paragraphs = split /\n\n+/, $c;
+    #$c = join('', map { "<p>$_</p>" } @paragraphs);
+
+    return "<pre>$c</pre>";
+}
+
+sub usage {
+    my ($rc, $msg) = @_;
+
+    print STDERR "error: $msg\n";
+
+    print STDERR qq{usage: mk-html-doc [options]
+
+options:
+    -d,--doc-dir DIR       Set the directory containing the documentation (e.g. "collapseos/doc/").
+    -o,--output-dir DIR    Set the output directory.
+    -t,--template-dir DIR  Set the directory containing the templates.
+    -h,--help              Show this text.
+
+This program turns CollapseOS text documentation into a set of browsable HTML pages.
+
+mk-html-doc by James Stanley <james\@incoherency.co.uk>
+};
+
+    exit($rc);
+}

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>CollapseOS Documentation Browser</title>
+    <style type="text/css">
+        body {
+            max-width: 900px;
+            margin: auto;
+            font-family: monospace;
+            font-size: 1.3em;
+        }
+
+        .heading {
+            font-weight: bold;
+            font-size: 1.5em;
+        }
+
+        .content {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .ls {
+        }
+
+        .ls .dir {
+        }
+
+        .ls .doc {
+        }
+    </style>
+</head>
+<body>
+<h2>CollapseOS Documentation Browser</h2>
+
+<p><b>[% path %]</b></p>
+
+<div class="ls">
+[% IF allowup -%]
+    <a class="a-dir" href="../index.html">../</a>
+[% END -%]
+
+[% IF files.size -%]
+    [% FOREACH file IN files -%]
+        [% IF file.dir -%]
+            <a class="dir" href="[% file.name %]/index.html">[% file.name %]/</a>
+        [% ELSE -%]
+            <a class="doc" href="[% file.name %].html">[% file.name %]</a>
+        [% END -%]
+    [% END -%]
+[% END -%]
+</div>
+
+<hr>
+
+<div class="content">
+[% html_content %]
+</div>
+
+<hr>
+
+<p><a href="http://collapseos.org/">CollapseOS</a> and its documentation are created
+by <a href="https://www.hardcoded.net/">Virgil Dupras</a> and licensed under
+the <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GNU GPL v3</a>.</p>
+
+<p>This documentation browser by <a href="https://incoherency.co.uk/">James Stanley</a>.</p>
+
+</body>
+</html>
