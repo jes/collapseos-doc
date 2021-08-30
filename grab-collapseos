@@ -15,7 +15,7 @@ GetOptions(
 $dir or usage(1, "--dir is mandatory");
 -d $dir or usage(1, "$dir is not a directory");
 
-# grab the CollapseOS download page
+# grab the Collapse OS download page
 my $html = get("http://collapseos.org/download.html");
 die "couldn't get download page" if !defined $html;
 
@@ -49,7 +49,7 @@ sub usage {
 options:
     -d,--dir DIR    Target directory.
 
-This program grabs the latest CollapseOS snapshot tarball and outputs its
+This program grabs the latest Collapse OS snapshot tarball and outputs its
 date code in YYYYMMDD format.
 
 grab-collapseos by James Stanley <james\@incoherency.co.uk>.

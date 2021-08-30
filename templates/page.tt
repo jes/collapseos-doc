@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>CollapseOS Documentation Browser</title>
+    <title>Collapse OS Documentation Browser</title>
     <style type="text/css">
         body {
             max-width: 900px;
@@ -40,7 +40,7 @@
     </style>
 </head>
 <body>
-<h2>CollapseOS Documentation Browser</h2>
+<h2>Collapse OS Documentation Browser</h2>
 
 <p><b>[% path %]</b></p>
 
@@ -68,7 +68,7 @@
 
 <hr>
 
-<p><a href="http://collapseos.org/">CollapseOS</a> and its documentation are created
+<p><a href="http://collapseos.org/">Collapse OS</a> and its documentation are created
 by <a href="https://www.hardcoded.net/">Virgil Dupras</a> and licensed under
 the <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GNU GPL v3</a>.</p>
 

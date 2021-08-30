@@ -145,7 +145,7 @@ options:
     -t,--template-dir DIR  Set the directory containing the templates.
     -h,--help              Show this text.
 
-This program turns CollapseOS text documentation into a set of browsable HTML pages.
+This program turns Collapse OS text documentation into a set of browsable HTML pages.
 
 mk-html-doc by James Stanley <james\@incoherency.co.uk>.
 };
