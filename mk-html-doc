@@ -4,6 +4,7 @@ use strict;
 use warnings;
 
 use File::Copy;
+use File::Path qw(make_path);
 use Getopt::Long;
 use Template;
 
@@ -54,7 +55,11 @@ sub write_page {
         # copy the image 
         my $output_raw = $output_file;
         $output_raw =~ s/\.html$//;
-        copy($doc_file, $output_raw);
+        my $output_dir = $output_file;
+        $output_dir =~ s/\/[^\/]*$//g;
+        make_path($output_dir);
+
+        copy($doc_file, $output_raw) or die "couldn't copy $doc_file to $output_raw";
 
         # make html to show it
         my $name = $doc_file;
