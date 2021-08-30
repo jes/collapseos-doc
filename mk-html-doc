@@ -66,7 +66,7 @@ sub write_page {
         my $txtcontent = join('', <$fh>);
         close $fh;
 
-        $html = htmlify($txtcontent);
+        $html = htmlify($txtcontent, $files_r);
     }
 
     $tt->process("$template_dir/page.tt", {
@@ -109,24 +109,31 @@ sub write_pages {
             (($a->{dir} <=> $b->{dir}) ||
              ($a->{name} cmp $b->{name}))
     } @files;
-    print "---\n";
-    print "  $_->{name}\n", for @index_files;
-    print "---\n";
     my $index_name = $index_files[0]->{name};
     copy("$output_dir/$index_name.html", "$output_dir/index.html");
 }
 
 sub htmlify {
-    my ($c) = @_;
+    my ($c, $files_r) = @_;
 
+    # escape funny chars
     $c =~ s/&/&amp;/g;
     $c =~ s/</&lt;/g;
     $c =~ s/>/&gt;/g;
 
-    $c =~ s/^#+\s+(.*)$/<span class="heading">$1<\/span>/mg;
+    # emphasise headings
+    $c =~ s/^#+\s+(.*)$/<span class="heading h1">$1<\/span>/m;
+    $c =~ s/^#+\s+(.*)$/<span class="heading h2">$1<\/span>/mg;
 
-    my @paragraphs = split /\n\n+/, $c;
-    #$c = join('', map { "<p>$_</p>" } @paragraphs);
+    # hyperlink filenames
+    for my $f (@$files_r) {
+        my $name = $f->{name};
+        if ($f->{dir}) {
+            $c =~ s/(?<=\s)\b$name\/([a-zA-Z0-9.]*)\b/<a href="$name\/$1.html">$name\/$1<\/a>/gm;
+        } else {
+            $c =~ s/(?<=\s)\b$name\b/<a href="$name.html">$name<\/a>/gm;
+        }
+    }
 
     return "<pre>$c</pre>";
 }
