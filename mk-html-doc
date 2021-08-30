@@ -128,7 +128,7 @@ sub htmlify {
     for my $f (@$files_r) {
         my $name = $f->{name};
         if ($f->{dir}) {
-            $c =~ s/(?<=\s)\b$name\/([a-zA-Z0-9.]*)\b/<a href="$name\/$1.html">$name\/$1<\/a>/gm;
+            $c =~ s/(?<=\s)\b$name\/([a-zA-Z0-9.-]*)\b/<a href="$name\/$1.html">$name\/$1<\/a>/gm;
         } else {
             $c =~ s/(?<=\s)\b$name\b/<a href="$name.html">$name<\/a>/gm;
         }
