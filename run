@@ -1,9 +1,12 @@
 #!/bin/sh
 
+TMP_DIR=snapshot
+HTML_DIR=collapseos
+
 # grab latest snapshot
-rm -rf collapseos/
-mkdir collapseos/
-releasedate=$(./grab-collapseos --dir collapseos)
+rm -rf "$TMP_DIR"
+mkdir "$TMP_DIR"
+releasedate=$(./grab-collapseos --dir snapshot)
 curdate=$(date +"%Y-%m-%d %H:%M:%S")
 
 # update footer template
@@ -12,9 +15,9 @@ cat > templates/foot.tt <<END
 END
 
 # create html
-rm -rf html/
-mkdir html/
-./mk-html-doc -d collapseos/doc -o html/ -t templates/
+rm -rf "$HTML_DIR"
+mkdir "$HTML_DIR"
+./mk-html-doc -d "$TMP_DIR"/doc -o "$HTML_DIR" -t templates/
 
 # clean up
-rm -rf collapseos/
+rm -rf "$TMP_DIR"
