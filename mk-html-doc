@@ -109,7 +109,11 @@ sub write_pages {
              ($a->{name} cmp $b->{name}))
     } @files;
     my $index_name = $index_files[0]->{name};
-    copy("$output_dir/$index_name.html", "$output_dir/index.html");
+    if (-f "$output_dir/$index_name.html") {
+        copy("$output_dir/$index_name.html", "$output_dir/index.html");
+    } else {
+        write_page("$output_dir/index.html", "/dev/null", "$output_dir/$index_name", 1, \@files);
+    }
 }
 
 sub htmlify {
