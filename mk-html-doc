@@ -112,7 +112,7 @@ sub write_pages {
     if (-f "$output_dir/$index_name.html") {
         copy("$output_dir/$index_name.html", "$output_dir/index.html");
     } else {
-        write_page("$output_dir/index.html", "/dev/null", "$output_dir/$index_name", 1, \@files);
+        write_page("$output_dir/index.html", "/dev/null", $path, $allowup, \@files);
     }
 }
 
