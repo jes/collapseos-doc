@@ -16,7 +16,7 @@ $dir or usage(1, "--dir is mandatory");
 -d $dir or usage(1, "$dir is not a directory");
 
 # grab the Collapse OS download page
-my $html = get("http://collapseos.org/download.html");
+my $html = get("http://collapseos.org/files/");
 die "couldn't get download page" if !defined $html;
 
 # find the latest snapshot
@@ -25,7 +25,7 @@ die "no snapshots found on download page" if !@snapshots;
 
 my $latestdate = $snapshots[0];
 my $latest = "collapseos-$latestdate.tar.gz";
-my $latesturl = "http://collapseos.org/$latest";
+my $latesturl = "http://collapseos.org/files/$latest";
 
 # download the latest snapshot
 my $code = getstore($latesturl, "/tmp/$latest");

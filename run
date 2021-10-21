@@ -11,7 +11,7 @@ curdate=$(date +"%Y-%m-%d %H:%M:%S")
 
 # update footer template
 cat > templates/foot.tt <<END
-<p>This page generated at $curdate from documentation in CollapseOS snapshot <a href="https://collapseos.org/collapseos-$releasedate.tar.gz">$releasedate</a>.</p>
+<p>This page generated at $curdate from documentation in CollapseOS snapshot <a href="https://collapseos.org/files/collapseos-$releasedate.tar.gz">$releasedate</a>.</p>
 END
 
 # create html
