@@ -20,7 +20,7 @@ my $html = get("http://collapseos.org/files/");
 die "couldn't get download page" if !defined $html;
 
 # find the latest snapshot
-my @snapshots = reverse sort ($html =~ /collapseos-(\d{8}).tar.gz/);
+my @snapshots = reverse sort ($html =~ /collapseos-(\d{8}).tar.gz/g);
 die "no snapshots found on download page" if !@snapshots;
 
 my $latestdate = $snapshots[0];
