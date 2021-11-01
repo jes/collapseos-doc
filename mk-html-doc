@@ -51,8 +51,10 @@ sub write_page {
 
     my $html = '';
 
-    if ($doc_file =~ /\.(jpe?g|png)$/) {
-        # copy the image 
+    if ($doc_file =~ /\.(jpe?g|png|pdf)$/) {
+        my $is_pdf = ($1 eq 'pdf');
+
+        # copy the file
         my $output_raw = $output_file;
         $output_raw =~ s/\.html$//;
         my $output_dir = $output_file;
@@ -62,9 +64,15 @@ sub write_page {
         copy($doc_file, $output_raw) or die "couldn't copy $doc_file to $output_raw";
 
         # make html to show it
-        my $name = $doc_file;
-        $name =~ s/^.*\///g;
-        $html = "<img src=\"$name\">";
+        if ($is_pdf) {
+            my $name = $doc_file;
+            $name =~ s/^.*\///g;
+            $html = "<a href=\"$name\">[download $name]</a>";
+        } else {
+            my $name = $doc_file;
+            $name =~ s/^.*\///g;
+            $html = "<img src=\"$name\">";
+        }
     } else {
         # htmlify text content
 
