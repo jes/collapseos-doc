@@ -134,7 +134,7 @@ sub htmlify {
 
     # emphasise headings
     $c =~ s/^#+\s+(.*)$/<span class="heading h1">$1<\/span>/m;
-    $c =~ s/^#+\s+(.*)$/<span class="heading h2">$1<\/span>/mg;
+    $c =~ s/(^|\n)#+\s+(.*)\n(\s)/$1<span class="heading h2">$2<\/span>\n$3/mg;
 
     # hyperlink filenames
     for my $f (@$files_r) {
