@@ -152,7 +152,7 @@ sub htmlify {
 sub usage {
     my ($rc, $msg) = @_;
 
-    print STDERR "error: $msg\n";
+    print STDERR "error: $msg\n" if $msg;
 
     print STDERR qq{usage: mk-html-doc [options]
 
